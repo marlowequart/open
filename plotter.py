@@ -9,9 +9,17 @@ import pandas as pd
 import numpy as np
 import os
 
+
+# use with matplotlib 2.2.2
+# mpl-finance 0.10.0
+# pip install https://github.com/matplotlib/mpl_finance/archive/master.zip
 import matplotlib.pyplot as plt
-from matplotlib.finance import candlestick2_ochl
-from matplotlib.finance import volume_overlay2
+
+#from matplotlib.finance import candlestick2_ochl
+#from matplotlib.finance import volume_overlay2
+from mpl_finance import candlestick2_ochl
+from mpl_finance import volume_overlay2
+
 import matplotlib.ticker as ticker
 from matplotlib import gridspec
 
@@ -62,7 +70,7 @@ def gen_plot_1(dataframe,startidx,endidx):
 	#####
 	fig = plt.figure()
 	ax = plt.subplot()
-	candlestick2_ochl(ax,open,low,high,close,width=0.5,colorup='b',colordown='r',alpha=0.75)
+	candlestick2_ochl(ax,open,close,high,low,width=0.5,colorup='b',colordown='r',alpha=0.75)
 	ax.xaxis.set_major_locator(ticker.MaxNLocator(num_ticks))
 	ax.xaxis.set_major_formatter(ticker.FuncFormatter(mydate))
 	fig.autofmt_xdate()
@@ -113,7 +121,7 @@ def gen_plot_2(dataframe,startidx,endidx):
 	fig = plt.figure()
 	
 	ax4 = plt.subplot()
-	candlestick2_ochl(ax4,open,low,high,close,width=0.5,colorup='b',colordown='r',alpha=0.75)
+	candlestick2_ochl(ax4,open,close,high,low,width=0.5,colorup='b',colordown='r',alpha=0.75)
 	ax4.xaxis.set_major_locator(ticker.MaxNLocator(num_ticks))
 	ax4.xaxis.set_major_formatter(ticker.FuncFormatter(mydate))
 	fig.autofmt_xdate()
@@ -207,7 +215,7 @@ def gen_plot_3(dataframe,startidx,endidx):
 	gs = gridspec.GridSpec(2,1, height_ratios=[3,1])
 	ax1 = plt.subplot(gs[0])
 	ax2 = plt.subplot(gs[1])
-	candlestick2_ochl(ax1,open,low,high,close,width=0.5,colorup='b',colordown='r',alpha=0.75)
+	candlestick2_ochl(ax1,open,close,high,low,width=0.5,colorup='b',colordown='r',alpha=0.75)
 	volume_overlay2(ax2,close,volume,width=0.5,colorup='b',colordown='r')
 	ax1.xaxis.set_major_locator(ticker.MaxNLocator(num_ticks))
 	ax1.xaxis.set_major_formatter(ticker.FuncFormatter(mydate))
@@ -244,11 +252,22 @@ def main():
 	#####
 	# Change the file name here
 	#####
+	
+	# Data location for mac:
+	# ~ path = '/Users/Marlowe/Marlowe/Securities_Trading/Trading_Ideas/Data/ES_Data/'
+	# ~ file_name='ES_full_dec_2007_to_nov_2018.csv'
+	# ~ file_name='ESZ18_06_13_to_11_13.csv'
+	# ~ file_full= os.path.join(path,file_name)
+	
+	
+	# Data location for PC:
 	script_dir = os.path.dirname(__file__)
 	rel_path='ES_Data/'
 	# file_name='ES_full_dec_2007_to_nov_2018.csv'
 	file_name='ESZ18_06_13_to_11_13.csv'
 	file_full= os.path.join(script_dir,rel_path,file_name)
+	
+	
 	
 	df=import_data(file_full)
 	
@@ -259,11 +278,21 @@ def main():
 	#####
 	#set the date
 	# Full day starts at 18:01:00 of previous day and ends at 17:00:00 of current day
+	start_date='2018-10-23'
+	start_time='18:01:00'
+	end_date='2018-10-24'
+	end_time='17:00:00'
+	
+	
+	
 	# cash session starts at 09:30:00 ends at 16:00:00
-	start_date='2018-10-26'
-	start_time='09:30:00'
-	end_date='2018-10-26'
-	end_time='16:00:00'
+	# ~ start_date='2018-10-26'
+	# ~ start_time='09:30:00'
+	# ~ end_date='2018-10-26'
+	# ~ end_time='16:00:00'
+	
+	
+	
 	start_day_df=df.loc[df['Date'] == start_date]
 	end_day_df=df.loc[df['Date'] == end_date]
 	# print(start_day_df.head())
@@ -281,8 +310,12 @@ def main():
 	# print(df.head())
 	# print(start_time_idx)
 	# print(end_time_idx)
-	# gen_plot_1(df,end_time_idx,start_time_idx)
+	
+	#standard candlestick plot
+	# ~ gen_plot_1(df,end_time_idx,start_time_idx)
+	#plot with volume by price
 	gen_plot_2(df,end_time_idx,start_time_idx)
-	# gen_plot_3(df,end_time_idx,start_time_idx)
+	#plot with volume on bottom
+	# ~ gen_plot_3(df,end_time_idx,start_time_idx)
 	
 main()
