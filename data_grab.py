@@ -84,31 +84,30 @@ def main():
 	#####
 	
 	# Data location for mac:
-	path = '/Users/Marlowe/Marlowe/Securities_Trading/Trading_Ideas/Data/ES_Data/'
+	# ~ path = '/Users/Marlowe/Marlowe/Securities_Trading/Trading_Ideas/Data/ES_Data/'
 	# ~ file_name='ES_full_dec_2007_to_nov_2018.csv'
-	file_name='ESZ18_06_13_to_11_13.csv'
-	file_full= os.path.join(path,file_name)
+	# ~ file_name='ESZ18_06_13_to_11_13.csv'
+	# ~ file_full= os.path.join(path,file_name)
 	
 	# ~ df=import_data(file_full)
 	# ~ print(df.head())
 	# ~ return
 	
 	# Data location for windows:
-	# ~ script_dir = os.path.dirname(__file__)
-	# ~ rel_path='ES_Data/'
-	# file_name='ES_full_dec_2007_to_nov_2018.csv'
-	# ~ file_name='ESZ18_06_13_to_11_13.csv'
-	# ~ file_full= os.path.join(script_dir,rel_path,file_name)
+	path = 'C:\\Python\\Data\\ES_Data\\'
+	file_name='ES_full_dec_2007_to_nov_2018.csv'
+	# file_name='ESZ18_06_13_to_11_13.csv'
+	file_full= os.path.join(path,file_name)
 	
 	
-	df_1=import_data(file_full)
-	# ~ print('num rows in df = '+str(df_1.shape[0]))
+	# df_1=import_data(file_full)
+	# print('num rows in df = '+str(df_1.shape[0]))
 	
 	
 	# remove NAN rows
-	check_nan=np.where(pd.isnull(df_1))
-	df=df_1.drop(df_1.index[[check_nan[0][0]]])
-	
+	# check_nan=np.where(pd.isnull(df_1))
+	# df=df_1.drop(df_1.index[[check_nan[0][0]]])
+	df=import_data(file_full)
 	
 	# Generate a list of days in the file
 	# days=df_1['Date'].unique().tolist()
@@ -164,6 +163,11 @@ def main():
 	# return data for multiple days here
 	#####
 	
+	# Generate a list of days in the file
+	days=df['Date'].unique().tolist()
+	# ~ print(days)
+	# ~ return
+	
 	# Full day starts at 18:01:00 of previous day and ends at 17:00:00 of current day
 	# ~ open_time='18:01:00'
 	# ~ close_time='17:00:00'
@@ -171,15 +175,21 @@ def main():
 	# cash session starts at 09:30:00 ends at 16:00:00
 	open_time='09:30:00'
 	close_time='16:00:00'
+	# When studying cash session, remove Sundays
+	for day in days:
+		today_df = df.loc[df['Date'] == day]
+		if len(today_df.index[today_df['Time'] == open_time].tolist()) < 1:
+			print(day)
+			# print(today_df.head())
+			# print(today_df.tail())
+	return
+	
+	
 	
 	# search through each day, get the open, close, high, low
 	
 	# cycle through days
 	
-	# Generate a list of days in the file
-	days=df['Date'].unique().tolist()
-	# ~ print(days)
-	# ~ return
 	# create a list of dates in this format:
 	# [['date',open,high,low,close,high_time,low_time]]
 	stat_list=[]
@@ -201,16 +211,16 @@ def main():
 			# ~ current_day_df = df.loc[df['Date'] == today]
 		
 		current_day_df = df.loc[df['Date'] == today]
-		print(len(current_day_df))
-		print(current_day_df.head())
-		print(current_day_df.tail())
+		# print(len(current_day_df))
+		# print(current_day_df.head())
+		# print(current_day_df.tail())
 		if i > 3:
 			return
-		# ~ day_open,day_high,day_low,day_close,high_time,low_time = daily_stats(current_day_df,open_time,close_time)
-		# ~ stat_list.append([today,day_open,day_high,day_low,day_close,high_time,low_time])
+		# day_open,day_high,day_low,day_close,high_time,low_time = daily_stats(current_day_df,open_time,close_time)
+		# stat_list.append([today,day_open,day_high,day_low,day_close,high_time,low_time])
 	
-	for item in stat_list:
-		print(item)
+	# for item in stat_list:
+		# print(item)
 	
 	# ~ print('num rows in df = '+str(df.shape[0]))
 	

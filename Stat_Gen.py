@@ -23,9 +23,16 @@ from openpyxl import load_workbook
 
 
 # define excel file names
-path = '/Users/Marlowe/Marlowe/Securities_Trading/Trading_Ideas/TradeOpen/'
+#mac path
+#path = '/Users/Marlowe/Marlowe/Securities_Trading/Trading_Ideas/TradeOpen/'
+#pc path
+path = 'C:\\Python\\open\\'
+
 file_name = 'TradingTheOpen.xlsx'
 sheet = 'SPHistoricalData'
+
+
+
 
 xlsx_file = path + file_name
 
@@ -35,8 +42,8 @@ def open_test_drive():
 	# On open-test-drive days, how soon is the test completed, mean and std dev
 	cols=[1,2,3,4,5,6,8]
 	doc = pd.read_excel(io=xlsx_file, sheet_name=sheet, index_col=0, header=4, usecols=cols)
-	# ~ print(doc.head())
-	
+	print(doc.head())
+	return
 	#First find the minimum time of the high or low.
 	time_of_test=[]
 	#Also find the value of the test compared to the open
