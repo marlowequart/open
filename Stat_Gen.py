@@ -32,7 +32,7 @@ import datetime
 
 
 # define excel file names
-path = '/Users/Marlowe/Marlowe/Securities_Trading/Trading_Ideas/TradeOpen/'
+path = '/Users/Marlowe/Marlowe/Securities_Trading/_Ideas/TradeOpen/'
 file_name = 'TradingTheOpen.xlsx'
 sheet = 'SPHistoricalData'
 
@@ -42,13 +42,43 @@ xlsx_file = path + file_name
 def time_avg(datetimeList):
 	#input list is datetime.datetime
 	
+	# ~ print(datetimeList)
+	# ~ return
+	
 	total = sum(dt.hour*3600 + dt.minute*60 + dt.second for dt in datetimeList)
 	avg = total / len(datetimeList)
 	minutes, seconds = divmod(int(avg), 60)
 	hours, minutes = divmod(minutes, 60)
-	# ~ print(datetime.datetime(1900, 1, 1,hours, minutes, seconds))
-	return datetime.datetime(1900, 1, 1,hours, minutes, seconds)
+	mean = datetime.datetime(1900, 1, 1,hours, minutes, seconds)
 	
+	#to get the std dev, create a list of dt objects of the
+	#difference between each object and the mean and square the result
+	#(results listed in seconds)
+	diff_list=[]
+	for dt in datetimeList:
+		conv_seconds = dt.hour*3600 + dt.minute*60 + dt.second
+		diff = conv_seconds-avg
+		diff_sq = diff*diff
+		diff_list.append(diff_sq)
+	#next get the mean of those squared differences
+	#(still in seconds)
+	mean_differences = sum(obj for obj in diff_list)/len(datetimeList)
+	
+	#take the square root of that average
+	#(in seconds)
+	std_dev_sec = round(mean_differences**(1/2),0)
+	
+	#lastly convert std dev to datetime obj
+	minutes1, seconds1 = divmod(int(std_dev_sec), 60)
+	hours1, minutes1 = divmod(minutes1, 60)
+	std_dev = datetime.datetime(1900, 1, 1,hours1, minutes1, seconds1)
+	
+	return mean,std_dev
+	
+
+def time_std_dev(datetimeList):
+	#input list is datetime.datetime
+	return
 
 
 def open_test_drive():
@@ -245,13 +275,12 @@ def open_reject_reverse_followthrough():
 	
 	direction_match_pct=round(100*direction_match/samp_size,1)
 	# ~ print(reversal_time)
-	mean_reversal_time=time_avg(reversal_time)
-	#2018-12-23 create function for std deviation of time.
+	mean_reversal_time,std_dev_reversal_time=time_avg(reversal_time)
 	
 	print('Total sample size mean 10 day ATR: '+str(round(stat.mean(ten_day_atr_overall),2)))
 	print('Total sample size 10 day ATR std dev: '+str(round(stat.stdev(ten_day_atr_overall),2)))
 	print('Total sample size mean reversal time: '+mean_reversal_time.strftime("%H:%M"))
-	# ~ print('Total sample size reversal time std dev: '+str(round(stat.stdev(reversal_time),2)))
+	print('Total sample size reversal time std dev: '+std_dev_reversal_time.strftime("%H:%M"))
 	return
 	print('\n')
 	print('On open-reject-reverse days, the day closes in the same direction as the reversal '+str(direction_match_pct)+'% of the time')
